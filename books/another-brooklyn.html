@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Another Brooklyn — memorization results</title>
+<meta name="description" content="Open-weight LLMs memorize books far more than previously believed. Memorization varies by model family, model size, and book. In extreme cases, entire books are memorized, and we can generate them effectively verbatim.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Extracting memorized books from open-weight LLMs">
+<meta property="og:title" content="How much do open-weight LLMs memorize specific books?">
+<meta property="og:description" content="Open-weight LLMs memorize books far more than previously believed. Memorization varies by model family, model size, and book. In extreme cases, entire books are memorized, and we can generate them effectively verbatim.">
+<meta property="og:url" content="https://books-memorization.github.io/">
+<meta property="og:image" content="https://books-memorization.github.io/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How much do open-weight LLMs memorize specific books?">
+<meta name="twitter:description" content="Open-weight LLMs memorize books far more than previously believed. Memorization varies by model family, model size, and book. In extreme cases, entire books are memorized, and we can generate them effectively verbatim.">
+<meta name="twitter:image" content="https://books-memorization.github.io/assets/og.png">
+<link rel="stylesheet" href="../css/style.css?v=db57e7f7">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><text x="0" y="13" font-size="14">%F0%9F%93%96</text></svg>'>
+<script src="../js/theme.js?v=e1539d51"></script>
+<script src="../js/loupe.js?v=80588116"></script>
+<!-- Google Analytics (GA4), privacy-tuned -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MW1JSYEMZS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-MW1JSYEMZS', {
+    allow_google_signals: false,
+    allow_ad_personalization_signals: false
+  });
+</script>
+</head>
+<body>
+<header class="topbar"><div class="wrap">
+  <div class="brand"><a class="brand-title" href="../index.html#top">Extracting memorized pieces of (copyrighted) books from open-weight language models</a><span class="brand-venue">COLM&nbsp;2026</span></div>
+  <nav><a href="../index.html">Home</a>
+  <a class="btn" href="https://arxiv.org/abs/2505.12546">Read the paper</a>
+  <button class="theme-toggle" type="button" aria-label="Toggle theme">&#9790;</button></nav>
+</div></header>
+
+<main class="wrap">
+  <div class="bookhead">
+    <h1 class="booktitle">Another Brooklyn</h1>
+    <div class="author">Jacqueline Woodson</div>
+    <dl class="metagrid">
+      <div><dt>Year first published</dt><dd>2016</dd></div>
+      <div><dt>Status</dt><dd>©</dd></div>
+      <div><dt>Selection</dt><dd>Manual</dd></div>
+      <div><dt>Publisher</dt><dd>HarperCollins e-books</dd></div>
+      <div style="grid-column:1/-1"><dt>Books3 manifest entry</dt><dd>https://the-eye.eu/public/Books/Bibliotik/A/Another%20Brooklyn%20-%20Jacqueline%20Woodson.epub</dd></div>
+    </dl>
+  </div>
+
+  <a class="backlink top" href="../index.html#explore">← Back to all books</a>
+
+  <section class="block">
+    <h2>How to read our results</h2>
+    <p class="sub">The numbers in our experiments come from a specific measurement procedure: we take 100-token
+      sequences throughout a book (every 10 characters, from start to end), and compute the extraction
+      probability of the last 50 tokens (the suffix) given the first 50 tokens (the prefix). This method is
+      called <a href="https://arxiv.org/abs/2410.19482">probabilistic extraction</a>.</p>
+    <p class="sub">The claims we make about
+      memorization are specific to this setup, including the decoding policy we use (top-<em>k</em> sampling
+      with <em>k</em> = 40 and temperature 1). Other settings may reveal different memorization: different
+      prompting strategies (e.g., longer prefixes or adversarial prompts), other decoding policies, or other
+      success conditions (e.g., near-verbatim matching).</p>
+    <p class="sub">It's worth remembering that extraction is the
+      observable signal we measure, while memorization is the underlying property of the model that we use this
+      signal to probe. Different setups may capture different signals, but as long as the setup is valid, each
+      one reveals some subset of what the model has memorized.</p>
+  </section>
+
+  <section class="block">
+    <h2>Model groups</h2>
+    <p class="sub">We arrange our results into three groups of models, based on what we know about their
+      training data.</p>
+    <div class="legend stack">
+      <span><span class="sw known"></span>LLMs known to be trained on Books3</span>
+      <span><span class="sw unknown"></span>LLMs we conclude were trained on (at least parts of) some books that are also contained in Books3</span>
+      <span><span class="sw phi"></span>Not trained on whole copyrighted books</span>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2>Extraction coverage by model</h2>
+    <p class="sub">Extraction coverage is the fraction of the book that's memorized. More precisely,
+      it's the share of the book's characters that fall within at least one 50-token suffix that we
+      extract from the model (extraction probability at least 0.1%). We show coverage for each of the 14 models;
+      longer bars mean more of <em>Another Brooklyn</em> is memorized. (High coverage doesn't mean the whole book can be
+      generated at once; it's a way to compare how much is memorized across books and models.)</p>
+    <div class="covchart"><div class="covgroup-label">LLMs known to be trained on Books3</div>
+<div class="covrow"><span class="name" title="Llama 2 7B">Llama 2 7B</span><span class="track"><span class="bar known" style="width:2.04%"></span><span class="val" style="left:2.04%">2.04%</span></span></div>
+<div class="covrow"><span class="name" title="Llama 3 8B">Llama 3 8B</span><span class="track"><span class="bar known" style="width:2.45%"></span><span class="val" style="left:2.45%">2.45%</span></span></div>
+<div class="covrow"><span class="name" title="Llama 3.1 8B">Llama 3.1 8B</span><span class="track"><span class="bar known" style="width:2.41%"></span><span class="val" style="left:2.41%">2.41%</span></span></div>
+<div class="covrow"><span class="name" title="Llama 1 13B">Llama 1 13B</span><span class="track"><span class="bar known" style="width:1.97%"></span><span class="val" style="left:1.97%">1.97%</span></span></div>
+<div class="covrow"><span class="name" title="Llama 2 13B">Llama 2 13B</span><span class="track"><span class="bar known" style="width:2.17%"></span><span class="val" style="left:2.17%">2.17%</span></span></div>
+<div class="covrow"><span class="name" title="Pythia 12B">Pythia 12B</span><span class="track"><span class="bar known" style="width:2.59%"></span><span class="val" style="left:2.59%">2.59%</span></span></div>
+<div class="covrow"><span class="name" title="Llama 1 65B">Llama 1 65B</span><span class="track"><span class="bar known" style="width:3.01%"></span><span class="val" style="left:3.01%">3.01%</span></span></div>
+<div class="covrow"><span class="name" title="Llama 2 70B">Llama 2 70B</span><span class="track"><span class="bar known" style="width:2.68%"></span><span class="val" style="left:2.68%">2.68%</span></span></div>
+<div class="covrow"><span class="name" title="Llama 3 70B">Llama 3 70B</span><span class="track"><span class="bar known" style="width:2.84%"></span><span class="val" style="left:2.84%">2.84%</span></span></div>
+<div class="covrow"><span class="name" title="Llama 3.1 70B">Llama 3.1 70B</span><span class="track"><span class="bar known" style="width:3.16%"></span><span class="val" style="left:3.16%">3.16%</span></span></div>
+<div class="covgroup-label">LLMs we conclude were trained on (at least parts of) some books that are also contained in Books3</div>
+<div class="covrow"><span class="name" title="DeepSeek v1 67B">DeepSeek v1 67B</span><span class="track"><span class="bar unknown" style="width:2.85%"></span><span class="val" style="left:2.85%">2.85%</span></span></div>
+<div class="covrow"><span class="name" title="Qwen 2.5 72B">Qwen 2.5 72B</span><span class="track"><span class="bar unknown" style="width:2.62%"></span><span class="val" style="left:2.62%">2.62%</span></span></div>
+<div class="covrow"><span class="name" title="Gemma 2 27B">Gemma 2 27B</span><span class="track"><span class="bar unknown" style="width:2.46%"></span><span class="val" style="left:2.46%">2.46%</span></span></div>
+<div class="covgroup-label">Not trained on whole copyrighted books</div>
+<div class="covrow"><span class="name" title="Phi 4">Phi 4</span><span class="track"><span class="bar phi" style="width:1.87%"></span><span class="val" style="left:1.87%">1.87%</span></span></div>
+<div class="covrow"><span class="name"></span><span class="covaxis"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></span></div></div>
+  </section>
+
+  <section class="block">
+    <h2>Memorization heatmaps</h2>
+    <p class="sub">Each heatmap reflects results from an experiment on one model. At each character position,
+      the color shows the maximum extraction probability among the overlapping 50-token suffixes that span that
+      character. Darker means higher extraction probability, on a log scale.
+      <span class="zoomhint">🔍 Hover over a heatmap to zoom in.</span></p>
+    <div class="figcard zoom">
+      <img src="../assets/Another_Brooklyn/Another_Brooklyn-heatmaps-10-known.png" alt="Memorization heatmaps for Another Brooklyn, one per model for the 10 models trained on Books3 (one row each). Each heatmap plots the maximum extraction probability at each character in the book, where the maximum is taken over all 50-token suffixes that span that character. Color is on a log scale, with white indicating no extraction, pale indicating low extraction probability, and dark meaning a high extraction probability. The horizontal axis is character position in the book." data-plot="0.141,0.088,0.967,0.961" data-loupe-strips="0.082,0.149;0.172,0.239;0.263,0.330;0.353,0.420;0.444,0.511;0.534,0.601;0.625,0.692;0.716,0.782;0.806,0.873;0.897,0.993" loading="lazy">
+      <img src="../assets/Another_Brooklyn/Another_Brooklyn-heatmaps-3-unknown.png" alt="Memorization heatmaps for Another Brooklyn, one per model for the 3 models where it&#x27;s undisclosed if they were trained on Books3 (one row each). Each heatmap plots the maximum extraction probability at each character in the book, where the maximum is taken over all 50-token suffixes that span that character. Color is on a log scale, with white indicating no extraction, pale indicating low extraction probability, and dark meaning a high extraction probability. The horizontal axis is character position in the book." data-plot="0.141,0.121,0.967,0.876" data-loupe-strips="0.114,0.305;0.400,0.590;0.687,0.960" loading="lazy">
+      <img src="../assets/Another_Brooklyn/Another_Brooklyn-heatmaps-1-phi.png" alt="Memorization heatmap for Another Brooklyn, for Phi 4 (a single model, one row). Phi 4 was not trained on whole copyrighted books. The heatmap plots the maximum extraction probability at each character in the book, where the maximum is taken over all 50-token suffixes that span that character. Color is on a log scale, with white indicating no extraction, pale indicating low extraction probability, and dark meaning a high extraction probability. The horizontal axis is character position in the book." data-plot="0.141,0.282,0.967,0.873" data-loupe-strips="0.276,0.910" loading="lazy">
+    </div>
+  </section>
+
+  <section class="block">
+    <h2>Distributions over extraction probability</h2>
+    <p class="sub">Each histogram shows the distribution of the 50-token sequences we extracted from a single
+      model. <em>n</em> is the raw number of sequences we extracted from that model (for example, <em>n</em>&nbsp;=&nbsp;40
+      means we extracted 40 sequences from it). The horizontal axis is extraction probability
+      (log scale, as in the other plots); the vertical axis is a count — the number of extracted sequences whose
+      probability falls in that bin — so the bar heights add up to <em>n</em>. Mass toward higher probability
+      means more of the extracted sequences are highly extractable. If a model has no extractable sequences, its
+      plot is left empty.</p>
+    <div class="figcard center"><img src="../assets/Another_Brooklyn/Another_Brooklyn-pz_hist_grid.png" alt="Extraction-probability distributions for Another Brooklyn: a grid of histograms, one per model. Each histogram shows the distribution of the 50-token sequences extracted from that model. n is the raw number of sequences extracted from the model (e.g. n=40 means 40 sequences were extracted from it). The horizontal axis is extraction probability on a log scale; the vertical axis is a count — the number of extracted sequences whose probability falls in each bin — so the bar heights add up to n. Mass toward high probability means many of the extracted sequences are highly extractable. If a model has no extractable sequences, its plot is left empty." loading="lazy"></div>
+  </section>
+
+  <a class="backlink" href="../index.html#explore">← Back to all books</a>
+</main>
+
+<footer class="site"><div class="wrap">
+  Figures and data from <a href="https://afedercooper.info" target="_blank" rel="noopener">Cooper</a> et&nbsp;al.,
+  &quot;Extracting memorized pieces of (copyrighted) books from open-weight language models,&quot;
+  <em>COLM&nbsp;2026</em>.
+</div></footer>
+</body>
+</html>

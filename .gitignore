@@ -1,0 +1,25 @@
+# Internal planning doc — kept on disk locally for reference, never shipped to the public repo.
+LAUNCH.md
+
+# Python build artifacts (build.py is the only source; nothing it emits belongs in the repo).
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local environment / secrets (e.g. the GA measurement id if it's ever moved out of build.py).
+.env
+.env.local
+
+# macOS and editor cruft.
+.DS_Store
+._*
+*.swp
+.idea/
+.vscode/
+
+# Landing figures that were exported but are not used on the page (the Tier-2 "How we measured it"
+# section was cut). Kept locally under assets/landing/ but not shipped.
+assets/landing/gatsby-extract-illustration.png
+assets/landing/gatsby-llama1-pz-comparison.png
+assets/landing/llama-3.1-70b-coverage-by-prefix.png

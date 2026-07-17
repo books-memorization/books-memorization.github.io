@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How much do open-weight LLMs memorize specific books?</title>
+<meta name="description" content="Open-weight LLMs memorize books far more than previously believed. Memorization varies by model family, model size, and book. In extreme cases, entire books are memorized, and we can generate them effectively verbatim.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Extracting memorized books from open-weight LLMs">
+<meta property="og:title" content="How much do open-weight LLMs memorize specific books?">
+<meta property="og:description" content="Open-weight LLMs memorize books far more than previously believed. Memorization varies by model family, model size, and book. In extreme cases, entire books are memorized, and we can generate them effectively verbatim.">
+<meta property="og:url" content="https://books-memorization.github.io/">
+<meta property="og:image" content="https://books-memorization.github.io/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How much do open-weight LLMs memorize specific books?">
+<meta name="twitter:description" content="Open-weight LLMs memorize books far more than previously believed. Memorization varies by model family, model size, and book. In extreme cases, entire books are memorized, and we can generate them effectively verbatim.">
+<meta name="twitter:image" content="https://books-memorization.github.io/assets/og.png">
+<link rel="stylesheet" href="css/style.css?v=db57e7f7">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><text x="0" y="13" font-size="14">%F0%9F%93%96</text></svg>'>
+<script src="js/theme.js?v=e1539d51"></script>
+<script src="js/search.js?v=c04b3045"></script>
+<script src="js/loupe.js?v=80588116"></script>
+<!-- Google Analytics (GA4), privacy-tuned -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MW1JSYEMZS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-MW1JSYEMZS', {
+    allow_google_signals: false,
+    allow_ad_personalization_signals: false
+  });
+</script>
+</head>
+<body>
+<header class="topbar"><div class="wrap">
+  <div class="brand"><a class="brand-title" href="#top">Extracting memorized pieces of (copyrighted) books from open-weight language models</a><span class="brand-venue">COLM&nbsp;2026</span></div>
+  <nav><a class="btn" href="https://arxiv.org/abs/2505.12546">Read the paper</a>
+  <button class="theme-toggle" type="button" aria-label="Toggle theme">&#9790;</button></nav>
+</div></header>
+
+<main class="wrap">
+  <div class="hero" id="top">
+    <h1>How much do open-weight LLMs memorize specific books?</h1>
+    <p class="byline"><a href="https://afedercooper.info" target="_blank" rel="noopener">A.&nbsp;Feder&nbsp;Cooper</a>, <a href="https://law.stanford.edu/mark-a-lemley/" target="_blank" rel="noopener">Mark&nbsp;A.&nbsp;Lemley</a>, <a href="https://reglab.stanford.edu/team-members/allison-casasola/" target="_blank" rel="noopener">Allison&nbsp;Casasola</a>, Ahmed&nbsp;Ahmed, Aaron&nbsp;Gokaslan, Amy&nbsp;B.&nbsp;Cyphert, <a href="https://www.cs.cornell.edu/~cdesa/" target="_blank" rel="noopener">Christopher&nbsp;De&nbsp;Sa</a>, <a href="https://law.stanford.edu/daniel-e-ho/" target="_blank" rel="noopener">Daniel&nbsp;E.&nbsp;Ho</a>, <a href="https://cs.stanford.edu/~pliang/" target="_blank" rel="noopener">Percy&nbsp;Liang</a></p>
+    <div class="herolinks">
+      <a class="btn" href="https://arxiv.org/abs/2505.12546">Read the paper</a>
+      
+      <a class="btn" href="#cite">Cite</a>
+      <a class="btn" href="#news">In the news</a>
+      <a class="btn" href="#related">Related work</a>
+      <a class="btn primary" href="#explore">Explore the 200 books ↓</a>
+    </div>
+    <div class="herofig">
+      <img class="light" src="assets/llama-light.png" alt="A cartoon llama spitting out a copy of George Orwell's 1984">
+      <img class="dark"  src="assets/llama-dark.png"  alt="A cartoon llama spitting out a copy of George Orwell's 1984">
+    </div>
+  </div>
+
+  <section class="blog" id="summary">
+    <p>There's currently an enormous (and growing) amount of litigation involving authors, publishers,
+      and AI companies over training large language models (LLMs) on copyrighted text. These cases involve
+      many issues, but a recurring theme is that LLMs sometimes reproduce text from their training data in
+      their outputs, including exact (or near-exact) passages from copyrighted books. When a model reproduces
+      its training data like this, that tells us something about the model itself: not only has it produced a
+      copy of that data at generation time, but that data is also encoded inside the model in some form. The
+      AI research community refers to this as <strong>memorization</strong>.</p>
+    <p>How much LLMs memorize their training data is a central question, both for copyright lawsuits and for AI
+      research more broadly. But most technical work that measures memorization doesn't address the
+      questions that matter most for copyright. It tends to measure memorization over random samples of
+      all the training data to estimate <em>average</em> memorization rates, yet copyright is about
+      <em>specific</em> works. So the copyright-relevant question is: how much of a <em>particular</em> book has
+      a <em>particular</em> LLM memorized?</p>
+    <p>This is exactly the question we study. We measure how much of 200 books from the <a
+      href="https://www.theatlantic.com/technology/archive/2023/08/books3-ai-meta-llama-pirated-books/675063/">Books3
+      corpus</a> (a common LLM pretraining dataset) a range of open-weight (non-chatbot) models have memorized.
+      We design a specific measurement procedure, and find that the answer varies
+      enormously. (This matters, because our memorization claims depend entirely on that procedure: changing it
+      &mdash; using longer prompts or counting near-exact matches &mdash; can surface even more memorization.)</p>
+
+    <h2>Memorization varies across books and models</h2>
+    <p>Across the models we test, most books are barely memorized; but some are memorized in part, and,
+      surprisingly, a few are memorized almost in their entirety. <a href="#fig-scatter">Figure 1</a> gives a
+      sense of our results, for one book (George Orwell's <em>Nineteen Eighty-Four</em>) under one model
+      (Llama 3.1 70B).</p>
+
+    <figure class="landing-fig" id="fig-scatter">
+      <div class="figcard zoom"><img src="assets/landing/1984-llama-3.1-70b-scatter.png"
+        data-plot="0.132,0.146,0.901,0.86"
+        alt="Scatterplot of sequences drawn from George Orwell's Nineteen Eighty-Four. Every dot shows the sequence's extraction probability under Llama 3.1 70B, plotted at its unique start-character position in the book, with color intensity reflecting the probability on a log scale (white for no extraction, pale for low, and dark for high). There are high extraction probabilities throughout the book. We also indicate with a horizontal line and shaded region above it which sequences have probabilities surpassing 25%."></div>
+      <figcaption><strong>Figure 1.</strong> Extraction probabilities across <em>Nineteen Eighty-Four</em> for
+        Llama 3.1 70B. Nearly every sequence is highly extractable; the book is memorized almost end to end.
+        (The parts that aren't extractable &mdash; the white regions &mdash; are an editor's foreword
+        and appendix.) Darker means higher extraction probability, on a log scale.
+        <span class="zoomhint">🔍 Hover over the plot to zoom in.</span></figcaption>
+    </figure>
+
+    <p>In the scatterplot, each dot is a sequence of text from <em>Nineteen Eighty-Four</em> (a 50-token chunk).
+      Its height is that sequence's <strong>extraction probability</strong>: we give the model the 50
+      tokens just before it as a prompt, and measure the probability that the model reproduces the sequence
+      exactly. Extraction is the observable signal we use in our measurements: when the model can reproduce
+      a sequence exactly, that's evidence of memorization in the model. A
+      dot's horizontal position reflects where its sequence sits in the book, so altogether the
+      scatterplot shows where and how strongly the book is memorized, from beginning to end.</p>
+    <p>The intensity of a dot's color, like its
+      height, also shows the extraction probability. White means the model never reproduces the sequence (0%),
+      and darker means a higher probability. For instance, a dot at 25% means that one out of every four times
+      you prompt the model with the given 50 tokens from the book, it returns the next 50 tokens verbatim. We
+      mark the sequences above 25% extraction probability with a horizontal line and a shaded band above it. (If
+      you want to understand more about how generating text involves probabilities, Tim Lee's <a
+      href="https://www.understandingai.org/p/metas-llama-31-can-recall-42-percent">excellent blog post</a>
+      about our work walks through it step by step.)
+      From the enormous number of high-probability sequences, we can see <em>Nineteen Eighty-Four</em> is effectively entirely memorized in Llama 3.1 70B.</p>
+    <p>This 50-token prompt / 50-token continuation setup is <a
+      href="https://nicholas.carlini.com/writing/2025/privacy-copyright-and-generative-models.html">standard</a>
+      in memorization research. A 50-token continuation is long enough that an LLM reproducing it exactly is
+      extraordinarily unlikely by chance, so we can be confident it's memorization. We can (and do) make
+      this intuition more formal in <a href="https://arxiv.org/abs/2505.12546">the paper</a> by running control experiments on non-training books, where
+      memorization is impossible. (This is also where the 0.1% minimum probability in the colorbars of
+      Figures 1 and 2 comes from: using those controls, we set a minimum probability that we can safely call
+      extraction.)</p>
+
+    <figure class="landing-fig" id="fig-heatmap">
+      <div class="figcard zoom"><img src="assets/landing/1984-llama-3.1-70b-heatmap.png"
+        data-plot="0.131,0.095,0.901,0.63" data-loupe-fit="0.045,0.65"
+        alt="A condensed view of the scatterplot for Nineteen Eighty-Four and Llama 3.1 70B. We show a heatmap that plots the maximum extraction probability at each character, where the maximum is taken over all 50-token suffixes that span that character, using the same log color scale as the scatterplot above. Nearly the entire heatmap is dark, indicating high extraction probabilities throughout the book. Effectively all of the book is memorized by Llama 3.1 70B. (The white regions have no extraction signal; they're an editor's foreword and appendix materials.)"></div>
+      <figcaption><strong>Figure 2.</strong> The same data as Figure 1, condensed into a heatmap: each position
+        is shaded by its extraction probability. The enormous amount of dark blue shows <em>Nineteen
+        Eighty-Four</em> is memorized basically everywhere in the book.
+        Darker means higher extraction probability, on a log scale.
+        <span class="zoomhint">🔍 Hover over the plot to zoom in.</span></figcaption>
+    </figure>
+
+    <p>We generally condense results like these into a heatmap, like the one shown in <a
+      href="#fig-heatmap">Figure 2</a>. The 50-token sequences we test overlap (which is why the scatterplot
+      shows many dots stacked at nearly the same horizontal position). So any given character in the book
+      actually falls inside several sequences. At each character position, the heatmap plots the maximum
+      (worst-case) extraction probability among the overlapping sequences that span it. Heatmaps make it easy
+      to compare memorization across books for the same model, or across models for the same book (which you
+      can <a href="#explore">explore</a> for all 200 books and 14 models we test).</p>
+    <p>Most book&ndash;model combinations reveal far less memorization than this. Many of the heatmaps are
+      almost entirely (if not completely) white. But quite a few books we tested are entirely memorized inside
+      Llama 3.1 70B, not just <em>Nineteen Eighty-Four</em>. The most memorized book in our experiments was
+      <em>Harry Potter and the Sorcerer's Stone</em>. It has effectively 100% extraction probability at
+      all positions in the book.</p>
+
+    <h2>Generating an entire memorized book</h2>
+    <p>So we tested whether we could get the model to generate the whole book. The experiment we ran is very
+      simple (see <a href="https://arxiv.org/abs/2505.12546">the paper</a> for full details), but the basics are that we gave Llama 3.1 70B the first few words
+      of <em>Harry Potter</em> (&quot;Mr. and Mrs. D&hellip;&quot;) and then let it continue from there. And
+      the model produced a nearly identical copy of the whole ~300-page book.</p>
+
+    <figure class="landing-fig" id="fig-hp-diff">
+      <div class="fig-row">
+        <div class="figcard"><img src="assets/landing/hp-diff-1.png"
+          alt="A portion of the result of our experiment that attempts to generate a whole book with one short seed prompt of ground-truth book text. We show a passage from Llama 3.1 70B's reconstruction of Harry Potter and the Sorcerer's Stone as a diff against the real book. Almost every word is identical; the only differences are trivial punctuation and spacing, e.g. 'powerful,' capitalized to 'Powerful,' and 'lot...' to 'lot....'."></div>
+        <div class="figcard"><img src="assets/landing/hp-diff-2.png"
+          alt="A second passage from the same reconstruction, again nearly identical to the book; the only changes are punctuation and British-to-American spelling — 'station.' to 'Station.' and 'Mum' to 'Mom'."></div>
+      </div>
+      <figcaption><strong>Figure 3.</strong> Two sections from Llama&nbsp;3.1&nbsp;70B's generated
+        <em>Harry Potter and the Sorcerer's Stone</em>, compared against the real book. They're
+        nearly identical.</figcaption>
+    </figure>
+
+    <p>And when we say nearly identical, we mean it. <a href="#fig-hp-diff">Figure 3</a> shows two parts of the
+      generation from the model, compared against the real book with (very minor) differences called out: struck-through red for
+      original book text that Llama 3.1 70B missed in the generation, yellow-highlighted for what it produced
+      instead. And these differences are trivial: a punctuation mark, a capitalized letter, or an Americanized
+      spelling (the British &quot;Mum&quot; becomes &quot;Mom&quot;). We also measure this quantitatively,
+      and find that the generation and the real book are a 99.2% match (full details on how we compute this are
+      in <a href="https://arxiv.org/abs/2505.12546">the paper</a>).</p>
+
+    <h2>Copyright implications</h2>
+    <p>These results have significant implications for the ongoing copyright lawsuits, and they don't
+      unambiguously favor either plaintiffs or defendants. We highlight three.</p>
+    <p>First, a model that has memorized a book could itself count as a copy (or derivative work) of that
+      book. Second, that copy could be infringing, or fair use might apply. But the fair use analysis for the
+      model is different from the fair use analysis for the training data. Third, these cases seem poorly suited
+      for class actions. To be certified, a class action requires all class members to share common legal and
+      factual issues, as well as suffer common injuries. But our results show that memorization varies across
+      books, across authors, and even across books by the same author, so it isn't clear a class action is
+      the right fit.</p>
+    <p>Please check out <a href="https://arxiv.org/abs/2505.12546">the paper</a> for more details.</p>
+
+    <div class="blog-jump">
+      <a class="btn primary" href="#explore">Explore the 200 books ↓</a>
+    </div>
+  </section>
+
+
+
+  <section class="block" id="cite">
+    <h2>How to cite our work</h2>
+    <div class="citebox">
+      <button class="copybtn" type="button" data-copy="bibtex">Copy</button>
+      <pre id="bibtex">@article{cooper2025books,
+  title  = {Extracting memorized pieces of (copyrighted) books from open-weight language models},
+  author = {Cooper, A. Feder and Lemley, Mark A. and Casasola, Allison and Ahmed, Ahmed and
+            Gokaslan, Aaron and Cyphert, Amy B. and De Sa, Christopher and Ho, Daniel E. and Liang, Percy},
+  journal = {arXiv preprint arXiv:2505.12546},
+  year   = {2025}
+}</pre>
+    </div>
+  </section>
+
+  <section class="block" id="news">
+    <h2>In the news</h2>
+    <div class="newsgrid">
+      <a class="newscard" href="https://www.theatlantic.com/technology/2026/01/ai-memorization-research/685552/" target="_blank" rel="noopener" aria-label="The Atlantic coverage"><span class="news-logo" style="--logo-scale:0.72"><img class="light" src="assets/news/atlantic.svg" alt="The Atlantic" loading="lazy"><img class="dark" src="assets/news/atlantic-dark.svg" alt="The Atlantic" loading="lazy"></span></a>
+<a class="newscard" href="https://arstechnica.com/features/2025/06/study-metas-llama-3-1-can-recall-42-percent-of-the-first-harry-potter-book/" target="_blank" rel="noopener" aria-label="Ars Technica coverage"><span class="news-logo" style="--logo-scale:1.22"><img class="light" src="assets/news/ars-technica.svg" alt="Ars Technica" loading="lazy"><img class="dark" src="assets/news/ars-technica-dark.svg" alt="Ars Technica" loading="lazy"></span></a>
+<a class="newscard" href="https://mashable.com/article/meta-llama-reproduce-excerpts-harry-potter-book-research" target="_blank" rel="noopener" aria-label="Mashable coverage"><span class="news-logo" style="--logo-scale:1.32"><img class="light" src="assets/news/mashable.svg" alt="Mashable" loading="lazy"><img class="dark" src="assets/news/mashable.svg" alt="Mashable" loading="lazy"></span></a>
+<a class="newscard" href="https://www.404media.co/meta-ai-model-memorized-harry-potter-books/" target="_blank" rel="noopener" aria-label="404 Media coverage"><span class="news-logo" style="--logo-scale:1.02"><img class="light" src="assets/news/404media.svg" alt="404 Media" loading="lazy"><img class="dark" src="assets/news/404media-dark.svg" alt="404 Media" loading="lazy"></span></a>
+<a class="newscard" href="https://news.ycombinator.com/item?id=44281812" target="_blank" rel="noopener" aria-label="Hacker News coverage"><span class="news-logo" style="--logo-scale:0.9"><img class="light" src="assets/news/hacker-news.svg" alt="Hacker News" loading="lazy"><img class="dark" src="assets/news/hacker-news.svg" alt="Hacker News" loading="lazy"></span></a>
+    </div>
+  </section>
+
+  <section class="block" id="related">
+    <h2>Related work</h2>
+    <div class="relgrid">
+      <a class="relcard" href="https://arxiv.org/abs/2601.02671" target="_blank" rel="noopener"><span class="rel-title">Extracting books from production language models</span><span class="rel-venue">preprint 2026</span></a>
+<a class="relcard" href="https://aclanthology.org/2025.naacl-long.469/" target="_blank" rel="noopener"><span class="rel-title">Measuring memorization in language models via probabilistic extraction</span><span class="rel-venue"><em>NAACL 2025</em></span></a>
+<a class="relcard" href="https://arxiv.org/abs/2603.24917" target="_blank" rel="noopener"><span class="rel-title">Estimating near-verbatim extraction risk in language models with decoding-constrained beam search</span><span class="rel-venue"><em>COLM 2026</em></span></a>
+<a class="relcard" href="https://arxiv.org/abs/2607.12649" target="_blank" rel="noopener"><span class="rel-title">Extractable Memorization From First Principles</span><span class="rel-venue">preprint 2026</span></a>
+<a class="relcard" href="https://arxiv.org/abs/2309.08133" target="_blank" rel="noopener"><span class="rel-title">Talkin&#x27; &#x27;Bout AI Generation: Copyright and the Generative-AI Supply Chain</span><span class="rel-venue"><em>Journal of the Copyright Society 2025</em></span></a>
+<a class="relcard" href="https://arxiv.org/abs/2404.12590" target="_blank" rel="noopener"><span class="rel-title">The Files are in the Computer: On Copyright, Memorization, and Generative AI</span><span class="rel-venue"><em>Chicago-Kent Law Review 2025</em></span></a>
+<a class="relcard" href="https://ssrn.com/abstract=7067878" target="_blank" rel="noopener"><span class="rel-title">Probabilistic &quot;Copies&quot; in Generative AI Models</span><span class="rel-venue"><em>Berkeley Technology Law Journal 2026</em></span></a>
+    </div>
+  </section>
+
+  <section class="block" id="explore">
+    <h2>Explore all 200 books</h2>
+    <p class="sub">Search for a title or author, filter by copyright status or how the book was
+      selected, and sort by how much of the book is detected as memorized with our extraction
+      procedure. Open a book to see its extraction-by-location heatmaps, extraction coverage, and
+      extraction-probability distributions for different models.</p>
+    <div class="controls">
+      <input class="search" type="search" placeholder="Search title or author…" autocomplete="off">
+      <div class="chips">
+        <span class="chip-label">Status</span>
+        <button class="chip" data-group="status" data-value="arr" aria-pressed="false">©</button>
+        <button class="chip" data-group="status" data-value="pd" aria-pressed="false">Public domain</button>
+        <button class="chip" data-group="status" data-value="cc" aria-pressed="false">CC BY-SA</button>
+        <span class="chip-label" style="margin-left:12px">Selection</span>
+        <button class="chip" data-group="sampling" data-value="curated" aria-pressed="false">Manual</button>
+        <button class="chip" data-group="sampling" data-value="random" aria-pressed="false">Random</button>
+        <span class="chip-label" style="margin-left:12px">Peak coverage</span>
+        <span class="covfilter">&ge;
+          <input type="number" class="cov-min" min="0" max="100" step="1" inputmode="numeric"
+                 placeholder="0" aria-label="Minimum peak memorization percent"> %
+        </span>
+      </div>
+      <div class="listbar">
+        <div class="result-count"></div>
+        <label class="sortctl">Sort:
+          <select class="sort">
+            <option value="title">Title (A–Z)</option>
+            <option value="peak-desc">Most memorized</option>
+            <option value="peak-asc">Least memorized</option>
+            <option value="author">Author (A–Z)</option>
+            <option value="year">Year</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="cards"></div>
+  </section>
+
+  <p class="backtotop"><a href="#top">↑ Back to top</a></p>
+</main>
+
+<footer class="site"><div class="wrap">
+  <div class="ack-body">
+    <div class="ack-logo"><img src="assets/ack/hai-mono.png" alt="Stanford HAI"></div>
+    <p>This work was supported by a Stanford University Human-Centered Artificial Intelligence
+      (HAI) seed grant, &quot;Assessing Copyright Risks of Training Data 'Memorization'
+      and 'Extraction' for Open-Weight Language&nbsp;Models.&quot;</p>
+  </div>
+</div></footer>
+</body>
+</html>
