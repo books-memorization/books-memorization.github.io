@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://books-memorization.github.io/sitemap.xml
